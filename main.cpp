@@ -23,8 +23,8 @@ using namespace std;
 int main()
 {
 	sf::Vector2i screen_size; //I'm usig this handy Vector2i to store the screen width and heigth.
-	screen_size.x = 1000;
-	screen_size.y = 1000;
+	screen_size.x = 800;
+	screen_size.y = 800;
 	sf::RenderWindow window(sf::VideoMode(screen_size.x, screen_size.y), "balls");
 
 	vector <Ball*> all_my_balls; 
@@ -32,10 +32,10 @@ int main()
 
 	//a vector to keep track of collisions. Used in game loop. Both ball objects are stored as a pair (taking advantage of the c++ pair command that lets you store two things in one variable.)
 	vector <pair<Ball*, Ball*>> collisions; 
-	collisions.clear();
+	collisions.clear(); 
 
 	Ball* my_ball;
-	for (int x = 0; x <5 ; x++) {
+	for (int x = 0; x < 5 ; x++) {
 		my_ball = new Ball(screen_size);
 		all_my_balls.push_back(my_ball);
 	}
@@ -53,7 +53,7 @@ int main()
 	{
 		elapsed = clock.getElapsedTime();
 		if (elapsed.asMilliseconds() < 17) { continue; } //this is the game loop. It will run every 17 milliseconds, or roughly 60 times per second.
-		window.clear(sf::Color(0, 0, 0));
+		window.clear(sf::Color(100, 50, 180));
 		//GENERIC UPDATE LOOP
 		while (window.pollEvent(event)) //this is the event loop. It will run every time the user does something, like move the mouse or click on the window.
 		{
