@@ -2,12 +2,15 @@
 #include <cstdlib>
 #include <iostream>
 #include <algorithm>  
+#include <SFML/Audio.hpp>
 
 
 
-bool is_line(sf::Vector2f A, sf::Vector2f B, sf::Vector2f C){
+bool is_line(sf::Vector2f A, sf::Vector2f B, sf::Vector2f C){ 
      return (B.x - A.x) * ((C.y+7) - A.y) - (B.y - A.y) * ((C.x) - A.x) > 0;
 }
+
+
 
 Ball::Ball(sf::Vector2i screen,sf::Vector2f ipos, sf::Vector2f ivel) : screen_size(screen), pos(ipos), vel(ivel) {
     gravity = sf::Vector2f(0.0f, 20.0f);
@@ -69,7 +72,7 @@ void Ball::draw(sf::RenderWindow& window) const {
     {
 
 
-        this->radius = 7;   
+        this->radius = 6;   
         this->color = sf::Color::Blue;
         this->x2 = 0;
         this->y2 = 0;
@@ -78,9 +81,9 @@ void Ball::draw(sf::RenderWindow& window) const {
     
     }
 
-    void TrigBall::update(sf::Time delta_t) {   
-        x += 1 * speedMultiplier * delta_t.asSeconds();
-        y += 1 * speedMultiplier * delta_t.asSeconds();
+    void TrigBall::update(sf::Time delta_t,sf::Vector2f A, sf::Vector2f B, sf::Vector2f C, sf::Vector2f D) {
+        x += 2.00f * speedMultiplier * (delta_t.asSeconds());
+        y += 2.00f * speedMultiplier * ( delta_t.asSeconds());
 
         float sinX = std::sin(x);
         float cosY = std::cos(y);
@@ -88,6 +91,18 @@ void Ball::draw(sf::RenderWindow& window) const {
         x2 = pos.x + (sinX) * motionRadius;  
         y2 = pos.y + (cosY) * motionRadius;
 
+        //Check collision with the V-shape
+     /*    if (!is_line(A, B, sf::Vector2f(x2, y2))) {
+            speedMultiplier = -speedMultiplier;
+            color = sf::Color::Blue;
+            sound.play();   
+        }
+        else if (is_line(C, D, sf::Vector2f(x2, y2))) {
+            speedMultiplier = -speedMultiplier;
+            color = sf::Color::Green;
+            sound.play();
+        }*/
+       
     }
     void TrigBall::draw(sf::RenderWindow& window){
         sf::CircleShape ball_shape_holder;
@@ -107,3 +122,56 @@ void Ball::draw(sf::RenderWindow& window) const {
     float ballRadius;
         */
 
+
+
+
+
+
+
+    void  CyBall::update(sf::Time tt) {
+        countdown = countdown - 0.04;
+        if (countdown > 0) { 
+            pos.x = radius * sin(0.115 * 2 * 3.1415926) + origin.x;
+            pos.y = -radius * cos(0.115 * 2 * 3.1415926) + origin.y;
+            return; }
+
+   //     counter = counter + (0.5*(tt.asSeconds()))*flag;
+        counter = counter + speedthing * flag;
+
+       // std::cout << counter << "\n";
+      //  if (counter>2*3.14159265){ counter = 0; }
+        double scale = radius;
+        double scale2 = radius;  //two scales in case you want to do ellipses.
+        pos.x = scale*sin(counter) + origin.x;
+        pos.y = -scale2*cos(counter) + origin.y;
+
+        if ((counter>0.115*2*3.1415926)||(counter<-(0.115 * 2 * 3.1415926))) {
+           flag = -flag;
+           speedthing = speedthing + 0.0005;
+        }
+
+    };
+    void  CyBall::draw(sf::RenderWindow& window) const {
+        sf::CircleShape ball_shape_holder;
+        ball_shape_holder.setRadius(8);
+        ball_shape_holder.setPosition(pos);
+        ball_shape_holder.setFillColor(sf::Color::Red);
+        ball_shape_holder.setOrigin(8, 8);
+       
+        sf::Vertex Leftline[] =
+        {
+            sf::Vertex(pos),
+            sf::Vertex(origin)
+        };
+        window.draw(Leftline, 2, sf::Lines);
+        window.draw(ball_shape_holder);
+    };
+
+
+    CyBall::CyBall(sf::Vector2f p, double rr, double cd) {
+            origin = p;
+            radius = rr;
+            countdown=cd;
+        }
+
+   
